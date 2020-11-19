@@ -10,5 +10,7 @@ export default class extends Logic {
 
     public async add() {
         console.log(11111111111);
+        this.ctx.body = `error`;
+        return false;
     }
 }

@@ -24,40 +24,235 @@
 Description here.
 -->
 
-## Install
-
+# Pandora & EGG JS
+* npm i egg-pandoras --save
+## Pandora 套件说明
+* 添加 Dto/Dao AOP 切面
+* 添加 Swagger JSDOC 注释生成文档
+* 添加 router 路由修饰器
+* 后续迭代更多功能
 ```bash
 $ npm i egg-pandora --save
 ```
 
 ## Usage
 
-```js
-// {app_root}/config/plugin.js
-exports.pandora = {
-  enable: true,
-  package: 'egg-pandora',
+```typescript
+// {app_root}/config/plugin.ts
+import { EggPlugin } from 'egg';
+
+const plugin: EggPlugin = {
+    // static: true,
+    // nunjucks: {
+    //   enable: true,
+    //   package: 'egg-view-nunjucks',
+    // },
+    pandora: {
+        enable: true,
+        package: 'egg-pandora',
+    }
 };
+
+export default plugin;
 ```
 
 ## Configuration
 
-```js
-// {app_root}/config/config.default.js
-exports.pandora = {
+```typescript
+// {app_root}/config/config.default.ts
+import { EggAppConfig, EggAppInfo, PowerPartial } from 'egg';
+
+export default (appInfo: EggAppInfo) => {
+    const config = {} as PowerPartial<EggAppConfig>;
+
+    // override config from framework / plugin
+    // use for cookie sign key, should change to your own and keep security
+    config.keys = appInfo.name + '_1605494805703_9866';
+
+    // add your egg config in here
+    config.middleware = [];
+
+    // add your special config in here
+    const bizConfig = {
+        sourceUrl: `https://github.com/eggjs/examples/tree/master/${appInfo.name}`,
+    };
+
+    const swagger = {
+        dirScanner: './app/controller',
+        DOCJSONPath: '/swagger.json',
+        DOCPath: '/swagger.io',
+        apiInfo: {
+            title: '测试用例',
+            description: 'API Swagger 用例',
+            version: '1.0.0',
+        },
+        schemes: ['http', 'https'],
+        consumes: ['application/json'],
+        produces: ['application/json'],
+        securityDefinitions: {
+            apikey: {
+                type: 'apiKey',
+                name: 'accesstoken',
+                in: 'header',
+            },
+            // oauth2: {
+            //   type: 'oauth2',
+            //   tokenUrl: 'http://petstore.swagger.io/oauth/dialog',
+            //   flow: 'password',
+            //   scopes: {
+            //     'write:access_token': 'write access_token',
+            //     'read:access_token': 'read access_token',
+            //   },
+            // },
+        },
+        enableSecurity: true,
+        enable: true,
+    };
+
+    // the return config will combines to EggAppConfig
+    return {
+        ...config,
+        ...bizConfig,
+        pandora: {
+            router: {
+                autoloader: true,
+            },
+            swagger,
+        },
+        security: {
+            xframe: { enable: false },
+            csrf: { enable: false },
+        },
+    };
 };
 ```
 
-see [config/config.default.js](config/config.default.js) for more detail.
 
-## Example
+## 基本使用
+* 启动 Pandora 套件
+* app/router.ts
+```typescript
+import { Application } from 'egg';
+import { router } from 'egg-pandoras';
 
-<!-- example here -->
+export default (app: Application) => router(app);
+```
+* swagger 通过 注释生成 可 配合 AOP 切面使用
+* AOP 切面 自动把 validator-class 转成 jsonschema
+* 这里注意一下 swagger 中使用 AOP 切面直接备注 切面名即可
+* app/controller/home.ts
+```typescript
+import { Controller } from 'egg';
+import { createWriteStream } from 'fs';
+import { isArray } from 'lodash';
+import { join } from 'path';
+import pump from 'pump';
+import { RequestMapping, RequestMethod, RestController } from 'egg-pandoras';
+import { HomeDataDto } from '../dto/home';
 
-## Questions & Suggestions
+/**
+ * @controller home
+ */
+@RestController
+export default class extends Controller {
 
-Please open an issue [here](https://github.com/eggjs/egg/issues).
+    /**
+     * @summary 创建资源
+     * @router POST /home/index/{id}/{uid}
+     * @request path string id ID
+     * @request path string uid UID
+     * @request query string test 测试
+     * @request query string test1 测试1
+     * @request formdata file file 文件 false
+     * @request formdata file file1 文件1 false
+     * @request body string name 名字
+     * @request body string age 年龄
+     * @consumes multipart/form-data
+     * @apikey
+     */
+    @RequestMapping({ path: 'index/:id/:uid', methods: [RequestMethod.POST] })
+    public async index() {
+        console.log('path', this.ctx.params);
+        console.log('query', this.ctx.request.query);
+        console.log('header', this.ctx.request.headers);
+        // console.log('body', this.ctx.request.body);
+        const parts = this.ctx.multipart();
+        const body: { [x: string]: string } = {};
+        let stream;
+        while ((stream = await parts()) != null) {
+            if (isArray(stream)) {
+                body[stream[0]] = stream[1];
+            } else if (stream.filename) {
+                const filename = stream.filename.toLowerCase();
+                const target = join(this.config.baseDir, 'app/public', filename);
+                const writeStream = createWriteStream(target);
+                await pump(stream, writeStream);
+            }
+        }
+        console.log('body', body);
+        const { ctx } = this;
+        console.log(await ctx.vaildAOP(HomeDataDto, {}));
 
-## License
+        // ctx.body = await ctx.service.test.sayHi('egg');
+        ctx.body = await ctx.service.test.test();
+    }
+}
+```
+* AOP 切面
+* 这里支持 [class-validator-jsonschema](https://github.com/epiphone/class-validator-jsonschema) 注释说明
+* app/dto/home.ts
+```typescript
+import {
+    Contains, IsInt, Length, IsEmail, IsFQDN, Dto,
+    IsDate, Min, Max, ValidateNested, IsString, IsEmpty,
+} from 'egg-pandoras';
 
-[MIT](LICENSE)
+export class Test1 extends Dto {
+
+    @Length(10, 20)
+    public title!: string;
+
+    @Contains('hello')
+    public text!: string;
+
+    @IsInt()
+    @Min(0)
+    @Max(10)
+    public rating!: number;
+
+    @IsEmail()
+    public email!: string;
+
+    @IsFQDN()
+    public site!: string;
+
+    @IsDate()
+    public createDate!: Date;
+}
+
+export class HomeDataDto extends Dto {
+
+    @IsString()
+    public error!: string;
+    @IsInt()
+    public errno!: number;
+
+    @ValidateNested()
+    @IsEmpty()
+    public data?: Test1;
+}
+
+```
+* logic 层 做数据验证 这里对用 controller 的 文件名 和目录结构
+* app/logic/user.ts
+```typescript
+import { Logic } from 'egg-pandoras';
+
+export default class extends Logic {
+    public async add() {
+        await this.ctx.vaildAOP('dto 或者 dao 或者 使用 egg-validate 插件',this.ctx.body);
+        // true 通过 false 将不会执行到 action
+        return true;
+    }
+}
+```

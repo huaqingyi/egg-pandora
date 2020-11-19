@@ -1,7 +1,5 @@
 import { Application } from 'egg';
-import { aop } from './aopImpl';
 import { PandoraRouterOption } from './router/core';
-// import { router } from './router';
 import { swagger, SwaggerOption } from './swagger';
 
 export * from './swagger';
@@ -14,7 +12,5 @@ export interface PandoraOption {
 }
 
 export const bootstrap = (app: Application, config: PandoraOption) => {
-    aop(app);
     swagger(app, config.swagger);
-    // router(app);
 }

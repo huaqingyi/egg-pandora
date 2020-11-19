@@ -11,16 +11,12 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.bootstrap = void 0;
-const aopImpl_1 = require("./aopImpl");
-// import { router } from './router';
 const swagger_1 = require("./swagger");
 __exportStar(require("./swagger"), exports);
 __exportStar(require("./aopImpl"), exports);
 __exportStar(require("./router"), exports);
 exports.bootstrap = (app, config) => {
-    aopImpl_1.aop(app);
     swagger_1.swagger(app, config.swagger);
-    // router(app);
 };
 
 //# sourceMappingURL=../../sourcemaps/app/pandora/index.js.map

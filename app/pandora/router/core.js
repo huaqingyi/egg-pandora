@@ -59,7 +59,9 @@ class PandoraRouter {
                         const logics = (new LogicClass(ctx));
                         try {
                             if (logics[name]) {
-                                await logics[name].apply(logics, [ctx]);
+                                const valid = await logics[name].apply(logics, [ctx]);
+                                if (valid === false)
+                                    return valid;
                             }
                         }
                         catch (error) {
