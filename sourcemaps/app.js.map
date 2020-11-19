@@ -1,0 +1,1 @@
+{"version":3,"sources":["app.ts"],"names":[],"mappings":";;AACA,2CAA0C;AAE1C,kBAAe,CAAC,GAAgB,EAAE,EAAE;IAChC,mBAAS,CAAC,GAAG,CAAC,CAAC;AACnB,CAAC,CAAC","file":"../app.js","sourcesContent":["import { Application } from 'egg';\nimport { bootstrap } from './app/pandora';\n\nexport default (app: Application) => {\n    bootstrap(app);\n};\n"]}

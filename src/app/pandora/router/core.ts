@@ -1,0 +1,52 @@
+import { Application, Context, Controller } from 'egg';
+import { map } from 'lodash';
+import { PANDORAROUTER, PANDORAROUTES } from './preconst';
+import { existsSync } from 'fs';
+
+export class PandoraRouter {
+    public routes: (new (...props: any) => Controller)[];
+
+    constructor() {
+        this.routes = [];
+    }
+
+    public async bootstrap(app: Application) {
+        return await Promise.all(map(this.routes, async control => {
+            const actions = control[PANDORAROUTES];
+            let prefix = control[PANDORAROUTER];
+            const fullPath = control.prototype.fullPath.
+                split('\\').join('/').
+                replace(/[\/]{2,9}/g, '/').
+                replace(/(\.ts)|(\.js)/g, '');
+
+            const controlName = fullPath.substring(fullPath.indexOf('controller/') + 'controller/'.length);
+            prefix = prefix || fullPath.substring(fullPath.indexOf('controller/') + 'controller/'.length);
+            prefix = prefix.startsWith('/') ? prefix : '/' + prefix;
+            const logicPath = control.prototype.fullPath.split('controller/').join('logic/');
+
+            await Promise.all(map(actions, ({ config, name }) => Promise.all(map(config.methods, async method => {
+                const path = `${prefix}${config.path.startsWith('/') ? config.path : `/${config.path}`}`;
+
+                if (existsSync(logicPath)) {
+                    app.router[method.toLocaleLowerCase()](path, async (ctx: Context, next) => {
+                        const LogicClass = (await import(logicPath)).default;
+                        const logics = (new LogicClass(ctx));
+                        try {
+                            if (logics[name]) { await logics[name].apply(logics, [ctx]); }
+                        } catch (error) {
+                            await next();
+                            return ctx.throw(500, error.message);
+                        }
+                        return await next();
+                    }, app.controller[controlName][name]);
+                } else {
+                    app.router[method.toLocaleLowerCase()](path, app.controller[controlName][name]);
+                }
+                return app.router;
+            }))));
+            return control;
+        }));
+    }
+}
+
+export const pandorouter = new PandoraRouter();
