@@ -14,8 +14,8 @@ exports.swagger = void 0;
 const document_1 = require("./document");
 __exportStar(require("./document"), exports);
 __exportStar(require("./constant"), exports);
-exports.swagger = (app) => {
-    return new document_1.Document(app);
+exports.swagger = (app, config) => {
+    return new document_1.Document(app, config);
 };
 
 //# sourceMappingURL=../../../sourcemaps/app/pandora/swagger/index.js.map

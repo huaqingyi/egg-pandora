@@ -17,9 +17,9 @@ const swagger_1 = require("./swagger");
 __exportStar(require("./swagger"), exports);
 __exportStar(require("./aopImpl"), exports);
 __exportStar(require("./router"), exports);
-exports.bootstrap = (app) => {
+exports.bootstrap = (app, config) => {
     aopImpl_1.aop(app);
-    swagger_1.swagger(app);
+    swagger_1.swagger(app, config.swagger);
     // router(app);
 };
 

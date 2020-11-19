@@ -15,7 +15,7 @@ require("reflect-metadata");
 const core_1 = require("./core");
 __exportStar(require("./decorators"), exports);
 exports.router = (app) => {
-    return core_1.pandorouter.bootstrap(app);
+    return core_1.pandorouter.bootstrap(app, app.config.pandora.router || { enable: false });
 };
 
 //# sourceMappingURL=../../../sourcemaps/app/pandora/router/index.js.map

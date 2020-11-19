@@ -13,13 +13,14 @@ const koa_convert_1 = __importDefault(require("koa-convert"));
 const koa_mount_1 = __importDefault(require("koa-mount"));
 const class_validator_jsonschema_1 = require("class-validator-jsonschema");
 class Document {
-    constructor(app) {
+    constructor(app, config) {
         this.app = app;
+        this.config = config;
         this.buildDocument(this.app);
     }
     buildDocument(app) {
         // config
-        const swagger = app.config.swagger;
+        const swagger = this.config || { enable: false };
         if (!swagger || swagger.enable === false) {
             return {};
         }

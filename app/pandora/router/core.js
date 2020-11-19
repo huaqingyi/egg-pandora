@@ -27,8 +27,20 @@ class PandoraRouter {
     constructor() {
         this.routes = [];
     }
-    async bootstrap(app) {
+    async bootstrap(app, config) {
+        config = {
+            autoloader: true,
+            ...config,
+        };
+        if (config.enable === false) {
+            return app;
+        }
         return await Promise.all(lodash_1.map(this.routes, async (control) => {
+            const ismap = control[preconst_1.PANDORAROUTEREABLE];
+            if (ismap !== true && config.autoloader === false) {
+                return control;
+            }
+            ;
             const actions = control[preconst_1.PANDORAROUTES];
             let prefix = control[preconst_1.PANDORAROUTER];
             const fullPath = control.prototype.fullPath.

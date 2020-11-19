@@ -20,11 +20,13 @@ function RestController(props) {
     if (lodash_1.isString(props)) {
         return (target) => {
             target[preconst_1.PANDORAROUTER] = props;
+            target[preconst_1.PANDORAROUTEREABLE] = true;
             core_1.pandorouter.routes.push(target);
             return target;
         };
     }
     else {
+        props[preconst_1.PANDORAROUTEREABLE] = true;
         core_1.pandorouter.routes.push(props);
         return props;
     }

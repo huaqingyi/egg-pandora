@@ -1,7 +1,7 @@
 import { Context, Controller } from 'egg';
 import { isString } from 'lodash';
 import { pandorouter } from '../core';
-import { PANDORAROUTER, PANDORAROUTES } from '../preconst';
+import { PANDORAROUTER, PANDORAROUTEREABLE, PANDORAROUTES } from '../preconst';
 
 export enum RequestMethod {
     GET = 'GET',
@@ -25,10 +25,12 @@ export function RestController(props: any) {
     if (isString(props)) {
         return <T extends (new (...props: any) => Controller)>(target: T) => {
             target[PANDORAROUTER] = props;
+            target[PANDORAROUTEREABLE] = true;
             pandorouter.routes.push(target);
             return target;
         }
     } else {
+        props[PANDORAROUTEREABLE] = true;
         pandorouter.routes.push(props);
         return props;
     }

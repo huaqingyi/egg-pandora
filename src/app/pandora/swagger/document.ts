@@ -8,17 +8,43 @@ import convert from 'koa-convert';
 import mount from 'koa-mount';
 import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
 
+export interface SwaggerOption {
+    dirScanner: string;
+    DOCJSONPath: string;
+    DOCPath: string;
+    apiInfo: {
+        title: string;
+        description: string;
+        version: string;
+    };
+    schemes?: string[];
+    consumes?: string[];
+    produces?: string[];
+    securityDefinitions: {
+        apikey?: { type: string; name: string; in: string; } | any;
+        oauth2?: {
+            type: string;
+            tokenUrl: string;
+            flow: string;
+            scopes: { [x: string]: string; },
+        } | any;
+    };
+    enableSecurity?: boolean;
+    enable?: boolean;
+}
+
 export class Document {
 
     constructor(
         private app: Application,
+        private config?: SwaggerOption,
     ) {
         this.buildDocument(this.app);
     }
 
     public buildDocument(app: Application) {
         // config
-        const swagger: any = app.config.swagger;
+        const swagger: any = this.config || { enable: false };
         if (!swagger || swagger.enable === false) { return {}; }
 
         const securitys: any[] = [];

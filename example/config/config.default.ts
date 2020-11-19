@@ -51,7 +51,12 @@ export default (appInfo: EggAppInfo) => {
     return {
         ...config,
         ...bizConfig,
-        swagger,
+        pandora: {
+            router: {
+                autoloader: true,
+            },
+            swagger,
+        },
         security: {
             xframe: { enable: false },
             csrf: { enable: false },

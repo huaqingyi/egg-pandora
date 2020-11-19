@@ -1,7 +1,12 @@
 import { Application, Context, Controller } from 'egg';
 import { map } from 'lodash';
-import { PANDORAROUTER, PANDORAROUTES } from './preconst';
+import { PANDORAROUTER, PANDORAROUTEREABLE, PANDORAROUTES } from './preconst';
 import { existsSync } from 'fs';
+
+export interface PandoraRouterOption {
+    autoloader?: boolean;
+    enable?: boolean;
+}
 
 export class PandoraRouter {
     public routes: (new (...props: any) => Controller)[];
@@ -10,8 +15,15 @@ export class PandoraRouter {
         this.routes = [];
     }
 
-    public async bootstrap(app: Application) {
+    public async bootstrap(app: Application, config: PandoraRouterOption) {
+        config = {
+            autoloader: true,
+            ...config,
+        }
+        if (config.enable === false) { return app; }
         return await Promise.all(map(this.routes, async control => {
+            const ismap = control[PANDORAROUTEREABLE];
+            if (ismap !== true && config.autoloader === false) { return control; };
             const actions = control[PANDORAROUTES];
             let prefix = control[PANDORAROUTER];
             const fullPath = control.prototype.fullPath.
