@@ -47,22 +47,23 @@
     "autod": "autod"
   },
   "files": [
+    "index.js",
     "app.js",
-    "agent.js",
+    "app",
     "config",
-    "app"
+    "index.d.ts"
   ],
   "ci": {
     "version": "8, 10"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/eggjs/egg-pandora.git"
+    "url": "git+https://github.com/huaqingyi/egg-pandora.git"
   },
   "bugs": {
     "url": "https://github.com/eggjs/egg/issues"
   },
-  "homepage": "https://github.com/eggjs/egg-pandora#readme",
+  "homepage": "https://github.com/huaqingyi/egg-pandora#readme",
   "author": "huaqingyi",
   "license": "MIT"
 }
