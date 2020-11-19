@@ -1,4 +1,4 @@
-import { Context, Controller } from 'egg';
+import { Controller } from 'egg';
 export declare enum RequestMethod {
     GET = "GET",
     POST = "POST",
@@ -18,6 +18,3 @@ export declare function RestController(path: string): <T extends (new (...props:
 export declare function parserm(config: RequestMappingOption, target: Controller, key: string, descr: TypedPropertyDescriptor<Controller>): void;
 export declare function RequestMapping(target: Controller, key: string): void;
 export declare function RequestMapping(options: RequestMappingOption): (target: Controller, key: string) => void;
-export declare class Logic extends Controller {
-    constructor(ctx: Context);
-}

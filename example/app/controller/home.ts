@@ -1,8 +1,4 @@
 import { Controller } from 'egg';
-import { createWriteStream } from 'fs';
-import { isArray } from 'lodash';
-import { join } from 'path';
-import pump from 'pump';
 import { RequestMapping, RequestMethod, RestController } from 'egg-pandora';
 import { HomeDataDto } from '../dto/home';
 
@@ -31,21 +27,8 @@ export default class extends Controller {
         console.log('path', this.ctx.params);
         console.log('query', this.ctx.request.query);
         console.log('header', this.ctx.request.headers);
-        // console.log('body', this.ctx.request.body);
-        const parts = this.ctx.multipart();
-        const body: { [x: string]: string } = {};
-        let stream;
-        while ((stream = await parts()) != null) {
-            if (isArray(stream)) {
-                body[stream[0]] = stream[1];
-            } else if (stream.filename) {
-                const filename = stream.filename.toLowerCase();
-                const target = join(this.config.baseDir, 'app/public', filename);
-                const writeStream = createWriteStream(target);
-                await pump(stream, writeStream);
-            }
-        }
-        console.log('body', body);
+        console.log('body', this.ctx.request.body);
+        console.log('file', this.ctx.request.files);
         const { ctx } = this;
         console.log(await ctx.vaildAOP(HomeDataDto, {}));
 

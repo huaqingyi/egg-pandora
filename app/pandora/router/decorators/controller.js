@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Logic = exports.RequestMapping = exports.parserm = exports.RestController = exports.RequestMethod = void 0;
-const egg_1 = require("egg");
+exports.RequestMapping = exports.parserm = exports.RestController = exports.RequestMethod = void 0;
 const lodash_1 = require("lodash");
 const core_1 = require("../core");
 const preconst_1 = require("../preconst");
@@ -59,11 +58,5 @@ function RequestMapping(...props) {
     }
 }
 exports.RequestMapping = RequestMapping;
-class Logic extends egg_1.Controller {
-    constructor(ctx) {
-        super(ctx);
-    }
-}
-exports.Logic = Logic;
 
 //# sourceMappingURL=../../../../sourcemaps/app/pandora/router/decorators/controller.js.map

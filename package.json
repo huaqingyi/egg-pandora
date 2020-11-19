@@ -1,9 +1,12 @@
 {
   "name": "egg-pandora",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "besire box for pandora plugin",
   "eggPlugin": {
-    "name": "pandora"
+    "name": "pandora",
+    "dependencies": [
+      "multipart"
+    ]
   },
   "keywords": [
     "egg",
@@ -14,12 +17,14 @@
     "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2",
     "class-validator-jsonschema": "^2.0.3",
+    "egg-multipart": "^2.10.3",
     "koa-convert": "^2.0.0",
     "koa-mount": "^4.0.0",
     "koa-static": "^5.0.0",
     "lodash": "^4.17.20",
     "openapi3-ts": "^2.0.0",
-    "swagger-ui-koa": "0.0.1"
+    "swagger-ui-koa": "0.0.1",
+    "think-validator": "^1.6.6"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.165",

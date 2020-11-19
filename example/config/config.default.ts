@@ -1,4 +1,6 @@
 import { EggAppConfig, EggAppInfo, PowerPartial } from 'egg';
+import { tmpdir } from 'os';
+import { join } from 'path';
 
 export default (appInfo: EggAppInfo) => {
     const config = {} as PowerPartial<EggAppConfig>;
@@ -60,6 +62,15 @@ export default (appInfo: EggAppInfo) => {
         security: {
             xframe: { enable: false },
             csrf: { enable: false },
+        },
+        multipart: {
+            mode: 'file',
+            tmpdir: join(tmpdir(), 'pandora', appInfo.name),
+            cleanSchedule: {
+                // run tmpdir clean job on every day 04:30 am
+                // cron style see https://github.com/eggjs/egg-schedule#cron-style-scheduling
+                cron: '0 30 4 * * *',
+            },
         },
     };
 };

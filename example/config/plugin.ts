@@ -19,7 +19,11 @@ const plugin: EggPlugin = {
     pandora: {
         enable: true,
         package: 'egg-pandora',
-    }
+    },
+    multipart: {
+        enable: true,
+        package: 'egg-multipart',
+    },
 };
 
 export default plugin;

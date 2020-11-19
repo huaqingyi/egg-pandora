@@ -244,15 +244,33 @@ export class HomeDataDto extends Dto {
 
 ```
 * logic 层 做数据验证 这里对用 controller 的 文件名 和目录结构
+* logic 移植于 thinkjs 可参考 [thinkjs logic](https://thinkjs.org/zh-cn/doc/3.0/logic.html)
+* context 添加 this.ctx.param(name?:string) 和 this.ctx.post(name?: string) this.ctx.file(name?:string)
+* 用法与 thinkjs 一致
 * app/logic/user.ts
 ```typescript
-import { Logic } from 'egg-pandoras';
+import { Logic, PandoraLogicRules, RequestMethod } from 'egg-pandora';
+import { Context } from 'egg';
 
 export default class extends Logic {
-    public async add() {
-        await this.ctx.vaildAOP('dto 或者 dao 或者 使用 egg-validate 插件',this.ctx.body);
-        // true 通过 false 将不会执行到 action
-        return true;
+
+    constructor(ctx: Context) {
+        super(ctx);
+        console.log('logic');
+    }
+
+    public async index() {
+        const rules: PandoraLogicRules = {
+            name: {
+                string: true,
+                required: true,
+                method: [RequestMethod.POST],
+            }
+        };
+        const valid = this.validate(rules);
+        console.log(111, valid);
+        this.ctx.body = `error`;
+        return false;
     }
 }
 ```

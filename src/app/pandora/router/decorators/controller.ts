@@ -1,4 +1,4 @@
-import { Context, Controller } from 'egg';
+import { Controller } from 'egg';
 import { isString } from 'lodash';
 import { pandorouter } from '../core';
 import { PANDORAROUTER, PANDORAROUTEREABLE, PANDORAROUTES } from '../preconst';
@@ -61,12 +61,5 @@ export function RequestMapping(...props: any[]) {
             const [config] = props;
             parserm(config, target, key, descr);
         }
-    }
-}
-
-export class Logic extends Controller {
-
-    constructor(ctx: Context) {
-        super(ctx);
     }
 }
