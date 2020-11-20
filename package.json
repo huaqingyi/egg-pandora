@@ -45,7 +45,7 @@
     "test": "npm run lint -- --fix && egg-bin pkgfiles && npm run test-local",
     "test-local": "egg-bin test",
     "cov": "egg-bin cov",
-    "lint": "eslint .",
+    "lint": "eslint ./**/*.ts --no-ignore",
     "ci": "egg-bin pkgfiles --check && npm run lint && npm run cov",
     "pkgfiles": "egg-bin pkgfiles",
     "dev": "egg-bin dev",
