@@ -118,6 +118,34 @@ export default (appInfo: EggAppInfo) => {
                 autoloader: true,
             },
             swagger,
+            // typeorm: false,
+        },
+        typeorm: {
+            type: 'mysql',
+            host: '127.0.0.1',
+            port: 33066,
+            username: 'root',
+            password: 'jzzs2020',
+            database: 'jzzs',
+            synchronize: true,
+            logging: false,
+            entities: ['app/entity/**/*.ts'],
+            migrations: ['app/migration/**/*.ts'],
+            subscribers: ['app/subscriber/**/*.ts'],
+            cli: {
+                entitiesDir: 'app/entity',
+                migrationsDir: 'app/migration',
+                subscribersDir: 'app/subscriber',
+            },
+        },
+        multipart: {
+            mode: 'file',
+            tmpdir: join(tmpdir(), 'pandora', appInfo.name),
+            cleanSchedule: {
+                // run tmpdir clean job on every day 04:30 am
+                // cron style see https://github.com/eggjs/egg-schedule#cron-style-scheduling
+                cron: '0 30 4 * * *',
+            },
         },
         security: {
             xframe: { enable: false },
@@ -191,6 +219,8 @@ export default class extends Controller {
         }
         console.log('body', body);
         const { ctx } = this;
+        console.log(await ctx.repo.User.count());
+        console.log(await ctx.repo.User.queryAll());
         console.log(await ctx.vaildAOP(HomeDataDto, {}));
 
         // ctx.body = await ctx.service.test.sayHi('egg');
@@ -198,6 +228,28 @@ export default class extends Controller {
     }
 }
 ```
+* entity 数据模型
+* 这里注意一下 sql 和 QueryBuilder 分在此层 单独抽离略嫌麻烦
+* 习惯了非常好用哦 非常推荐
+```typescript
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { TypeOrm } from 'egg-pandora';
+
+@Entity()
+export class User extends TypeOrm<User> {
+
+    @PrimaryGeneratedColumn()
+    public id!: number;
+
+    @Column()
+    public name!: string;
+
+    public async queryAll() {
+        return this.findAndCount();
+    }
+}
+```
+
 * AOP 切面
 * 这里支持 [class-validator-jsonschema](https://github.com/epiphone/class-validator-jsonschema) 注释说明
 * app/dto/home.ts
