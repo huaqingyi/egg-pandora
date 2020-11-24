@@ -14,23 +14,22 @@ exports.typeorm = void 0;
 const core_1 = require("./core");
 exports.typeorm = async (app) => {
     const config = app.config.typeorm;
-    if (!config) {
-        throw new Error('please config typeorm in config file');
+    if (config) {
+        app.beforeStart(async () => {
+            try {
+                await core_1.connectDB(app);
+                // if (app.config.env === 'local') {
+                core_1.watchEntity(app);
+                // }
+                await core_1.loadEntityAndModel(app);
+                app.logger.info('[typeorm]', '数据链接成功');
+            }
+            catch (error) {
+                app.logger.error('[typeorm]', '数据库链接失败');
+                app.logger.error(error);
+            }
+        });
     }
-    app.beforeStart(async () => {
-        try {
-            await core_1.connectDB(app);
-            // if (app.config.env === 'local') {
-            core_1.watchEntity(app);
-            // }
-            await core_1.loadEntityAndModel(app);
-            app.logger.info('[typeorm]', '数据链接成功');
-        }
-        catch (error) {
-            app.logger.error('[typeorm]', '数据库链接失败');
-            app.logger.error(error);
-        }
-    });
 };
 __exportStar(require("./core"), exports);
 __exportStar(require("./orm"), exports);

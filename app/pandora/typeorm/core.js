@@ -153,8 +153,9 @@ exports.getEntityFromPath = getEntityFromPath;
 async function loadEntityAndModel(app) {
     const { baseDir } = app;
     const entityDir = path_1.join(baseDir, 'app', 'entity');
-    if (!fs_extra_1.existsSync(entityDir))
+    if (!fs_extra_1.existsSync(entityDir)) {
         return;
+    }
     const matching = hasTsLoader ? '*.ts' : '*.js';
     const files = fs_jetpack_1.find(entityDir, { matching });
     app.context.repo = {};
