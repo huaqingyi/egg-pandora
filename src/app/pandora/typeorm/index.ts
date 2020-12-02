@@ -2,7 +2,10 @@ import { Application } from 'egg';
 import { connectDB, loadEntityAndModel, watchEntity } from './core';
 
 export const typeorm = async (app: Application) => {
-    const config = app.config.typeorm;
+    let config;
+    try {
+        config = app.config.typeorm;
+    } catch (err) { }
     if (config) {
         app.beforeStart(async () => {
             try {

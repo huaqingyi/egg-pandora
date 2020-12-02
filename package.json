@@ -1,6 +1,6 @@
 {
   "name": "egg-pandora",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "besire box for pandora plugin",
   "eggPlugin": {
     "name": "pandora",

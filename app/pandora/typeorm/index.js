@@ -13,7 +13,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.typeorm = void 0;
 const core_1 = require("./core");
 exports.typeorm = async (app) => {
-    const config = app.config.typeorm;
+    let config;
+    try {
+        config = app.config.typeorm;
+    }
+    catch (err) { }
     if (config) {
         app.beforeStart(async () => {
             try {
