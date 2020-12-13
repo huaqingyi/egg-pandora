@@ -1,7 +1,7 @@
 {
   "name": "egg-pandora",
-  "version": "1.0.2",
-  "description": "besire box for pandora plugin",
+  "version": "1.0.3",
+  "description": "egg pandora 套件",
   "eggPlugin": {
     "name": "pandora",
     "dependencies": [
@@ -10,6 +10,16 @@
   },
   "keywords": [
     "egg",
+    "swagger",
+    "logic",
+    "validate",
+    "valid",
+    "aop",
+    "jsdoc",
+    "typeorm",
+    "dto",
+    "decorators",
+    "decorator",
     "eggPlugin",
     "egg-plugin"
   ],
