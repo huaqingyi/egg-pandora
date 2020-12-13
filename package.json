@@ -1,6 +1,6 @@
 {
   "name": "egg-pandora",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "egg pandora 套件",
   "eggPlugin": {
     "name": "pandora",
@@ -28,16 +28,23 @@
     "class-validator": "^0.12.2",
     "class-validator-jsonschema": "^2.0.3",
     "egg-multipart": "^2.10.3",
+    "fs-extra": "^9.0.1",
+    "fs-jetpack": "^4.1.0",
     "koa-convert": "^2.0.0",
     "koa-mount": "^4.0.0",
     "koa-static": "^5.0.0",
     "lodash": "^4.17.20",
     "openapi3-ts": "^2.0.0",
+    "prettier": "^2.2.0",
     "swagger-ui-koa": "0.0.1",
-    "think-validator": "^1.6.6"
+    "think-validator": "^1.6.6",
+    "typedi": "^0.8.0",
+    "typeorm": "^0.2.29"
   },
   "devDependencies": {
+    "@types/fs-extra": "^9.0.4",
     "@types/lodash": "^4.14.165",
+    "@types/prettier": "^2.1.5",
     "autod": "^3.0.1",
     "autod-egg": "^1.1.0",
     "egg": "^2.29.1",
@@ -55,7 +62,7 @@
     "test": "npm run lint -- --fix && egg-bin pkgfiles && npm run test-local",
     "test-local": "egg-bin test",
     "cov": "egg-bin cov",
-    "lint": "eslint .",
+    "lint": "eslint ./**/*.ts --no-ignore",
     "ci": "egg-bin pkgfiles --check && npm run lint && npm run cov",
     "pkgfiles": "egg-bin pkgfiles",
     "dev": "egg-bin dev",

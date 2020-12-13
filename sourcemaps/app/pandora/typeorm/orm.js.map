@@ -1,0 +1,1 @@
+{"version":3,"sources":["app/pandora/typeorm/orm.ts"],"names":[],"mappings":";;;AAAA,qCAAqC;AAErC,MAAa,OAAW,SAAQ,oBAAa;CAE5C;AAFD,0BAEC","file":"../../../../app/pandora/typeorm/orm.js","sourcesContent":["import { Repository } from 'typeorm';\n\nexport class TypeOrm<T> extends Repository<T> {\n\n}\n"]}
