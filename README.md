@@ -24,15 +24,19 @@
 Description here.
 -->
 
-# Pandora & EGG JS
-* npm i egg-pandoras --save
+## Pandora & EGG JS
+
+* npm i egg-pandora --save
+
 ## Pandora 套件说明
+
 * 添加 Dto/Dao AOP 切面
 * 添加 Swagger JSDOC 注释生成文档
 * 添加 router 路由修饰器
 * 后续迭代更多功能
+
 ```bash
-$ npm i egg-pandora --save
+npm i egg-pandora --save
 ```
 
 ## Usage
@@ -155,27 +159,30 @@ export default (appInfo: EggAppInfo) => {
 };
 ```
 
-
 ## 基本使用
+
 * 启动 Pandora 套件
 * app/router.ts
+
 ```typescript
 import { Application } from 'egg';
-import { router } from 'egg-pandoras';
+import { router } from 'egg-pandora';
 
 export default (app: Application) => router(app);
 ```
+
 * swagger 通过 注释生成 可 配合 AOP 切面使用
 * AOP 切面 自动把 validator-class 转成 jsonschema
 * 这里注意一下 swagger 中使用 AOP 切面直接备注 切面名即可
 * app/controller/home.ts
+
 ```typescript
 import { Controller } from 'egg';
 import { createWriteStream } from 'fs';
 import { isArray } from 'lodash';
 import { join } from 'path';
 import pump from 'pump';
-import { RequestMapping, RequestMethod, RestController } from 'egg-pandoras';
+import { RequestMapping, RequestMethod, RestController } from 'egg-pandora';
 import { HomeDataDto } from '../dto/home';
 
 /**
@@ -228,9 +235,11 @@ export default class extends Controller {
     }
 }
 ```
+
 * entity 数据模型
 * 这里注意一下 sql 和 QueryBuilder 分在此层 单独抽离略嫌麻烦
 * 习惯了非常好用哦 非常推荐
+
 ```typescript
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { TypeOrm } from 'egg-pandora';
@@ -253,11 +262,12 @@ export class User extends TypeOrm<User> {
 * AOP 切面
 * 这里支持 [class-validator-jsonschema](https://github.com/epiphone/class-validator-jsonschema) 注释说明
 * app/dto/home.ts
+
 ```typescript
 import {
     Contains, IsInt, Length, IsEmail, IsFQDN, Dto,
     IsDate, Min, Max, ValidateNested, IsString, IsEmpty,
-} from 'egg-pandoras';
+} from 'egg-pandora';
 
 export class Test1 extends Dto {
 
@@ -295,11 +305,13 @@ export class HomeDataDto extends Dto {
 }
 
 ```
+
 * logic 层 做数据验证 这里对用 controller 的 文件名 和目录结构
 * logic 移植于 thinkjs 可参考 [thinkjs logic](https://thinkjs.org/zh-cn/doc/3.0/logic.html)
 * context 添加 this.ctx.param(name?:string) 和 this.ctx.post(name?: string) this.ctx.file(name?:string)
 * 用法与 thinkjs 一致
 * app/logic/user.ts
+
 ```typescript
 import { Logic, PandoraLogicRules, RequestMethod } from 'egg-pandora';
 import { Context } from 'egg';
