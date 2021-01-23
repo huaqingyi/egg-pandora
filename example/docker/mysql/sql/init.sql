@@ -1,0 +1,33 @@
+CREATE DATABASE IF NOT EXISTS jzzs DEFAULT CHARACTER SET = utf8mb4;
+
+Use jzzs;
+
+DROP TABLE IF EXISTS `dailys`;
+
+-- CREATE TABLE `dailys` (
+-- 	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+-- 	`project` VARCHAR(20) NOT NULL,
+-- 	`content` VARCHAR(20) NOT NULL,
+-- 	`created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+-- 	`updated_at` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+-- 	PRIMARY KEY (`id`)
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='测试';
+
+-- INSERT INTO `dailys` (`project`, `content`)
+-- VALUES
+-- 	('样例部门1', 'apollo1');
+
+-- DROP TABLE IF EXISTS `dailys1`;
+
+-- CREATE TABLE `dailys1` (
+-- 	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+-- 	`project` VARCHAR(20) NOT NULL,
+-- 	`content` VARCHAR(20) NOT NULL,
+-- 	`created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+-- 	`updated_at` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+-- 	PRIMARY KEY (`id`)
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='测试';
+
+-- INSERT INTO `dailys1` (`project`, `content`)
+-- VALUES
+-- 	('样例部门2', 'apollo2');

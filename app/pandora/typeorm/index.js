@@ -21,11 +21,8 @@ exports.typeorm = async (app) => {
     if (config) {
         app.beforeStart(async () => {
             try {
-                await core_1.connectDB(app);
-                // if (app.config.env === 'local') {
-                core_1.watchEntity(app);
-                // }
-                await core_1.loadEntityAndModel(app);
+                const core = new core_1.Core(app);
+                await core.connectDB();
                 app.logger.info('[typeorm]', '数据链接成功');
             }
             catch (error) {
@@ -37,5 +34,6 @@ exports.typeorm = async (app) => {
 };
 __exportStar(require("./core"), exports);
 __exportStar(require("./orm"), exports);
+__exportStar(require("./context"), exports);
 
 //# sourceMappingURL=../../../sourcemaps/app/pandora/typeorm/index.js.map

@@ -184,6 +184,7 @@ import { join } from 'path';
 import pump from 'pump';
 import { RequestMapping, RequestMethod, RestController } from 'egg-pandora';
 import { HomeDataDto } from '../dto/home';
+import { User } from '../entity/user';
 
 /**
  * @controller home
@@ -207,6 +208,8 @@ export default class extends Controller {
      */
     @RequestMapping({ path: 'index/:id/:uid', methods: [RequestMethod.POST] })
     public async index() {
+        console.log('db 使用', await ctx.repo(User).count());
+        console.log('db 使用', await ctx.repo(User).queryAll());
         console.log('path', this.ctx.params);
         console.log('query', this.ctx.request.query);
         console.log('header', this.ctx.request.headers);

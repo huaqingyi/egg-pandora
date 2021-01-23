@@ -1,8 +1,10 @@
 import { ValidationError, ValidationSchema } from 'class-validator';
 import { EggFile } from 'egg-multipart';
 import { SchemaObject } from 'openapi3-ts';
+import { Connection } from 'typeorm';
 import { PandoraForm } from '../pandora';
 import { AOP } from '../pandora/aopImpl/aop';
+import { TypeORM, TypeOrmClass } from '../pandora/typeorm';
 
 declare module 'egg' {
     interface Context {
@@ -22,10 +24,14 @@ declare module 'egg' {
 
         file(): EggFile[];
         file(name?: string): EggFile;
+
+        connection: Connection;
+        repo: <E extends TypeOrmClass<E>>(Entity: E, dbName?: string) => E;
     }
 }
 
 export default {
     ...AOP,
     ...PandoraForm,
+    ...TypeORM,
 };
