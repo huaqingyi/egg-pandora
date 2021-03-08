@@ -341,3 +341,37 @@ export default class extends Logic {
     }
 }
 ```
+
+* 添加 JWT 验证
+* config/plugin.ts
+
+```typescript
+import { EggPlugin } from 'egg';
+
+const plugin: EggPlugin = {
+    // ...
+    jwt: {
+        enable: true,
+        package: 'egg-jwt'
+    },
+};
+
+export default plugin;
+```
+
+* 添加 JWT 验证
+* config/config.[env].ts
+
+```typescript
+import { EggAppInfo } from 'egg';
+
+export default (appInfo: EggAppInfo) => {
+    // the return config will combines to EggAppConfig
+    return {
+        // ...
+        jwt: {
+            secret: '123456'
+        },
+    };
+};
+```

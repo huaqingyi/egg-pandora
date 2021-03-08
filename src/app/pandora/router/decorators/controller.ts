@@ -17,6 +17,7 @@ export enum RequestMethod {
 export interface RequestMappingOption {
     path?: string;
     methods?: (RequestMethod | string)[];
+    secret?: boolean;
 }
 
 export function RestController<T extends (new (...props: any) => Controller)>(target: T): T;

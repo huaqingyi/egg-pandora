@@ -90,5 +90,8 @@ export default (appInfo: EggAppInfo) => {
                 cron: '0 30 4 * * *',
             },
         },
+        // jwt: {
+        //     secret: '123456'
+        // },
     };
 };

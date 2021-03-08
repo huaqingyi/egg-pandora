@@ -1,6 +1,6 @@
 {
   "name": "egg-pandora",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "egg pandora 套件",
   "eggPlugin": {
     "name": "pandora",
@@ -27,6 +27,7 @@
     "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2",
     "class-validator-jsonschema": "^2.0.3",
+    "egg-jwt": "^3.1.7",
     "egg-multipart": "^2.10.3",
     "fs-extra": "^9.0.1",
     "fs-jetpack": "^4.1.0",

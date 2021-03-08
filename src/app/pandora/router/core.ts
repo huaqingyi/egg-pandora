@@ -40,22 +40,28 @@ export class PandoraRouter {
                 const path = `${prefix}${config.path.startsWith('/') ? config.path : `/${config.path}`}`;
 
                 if (existsSync(logicPath)) {
-                    app.router[method.toLocaleLowerCase()](path, async (ctx: Context, next) => {
+                    const actions = [async (ctx: Context, next) => {
                         const LogicClass = (await import(logicPath)).default;
                         const logics = (new LogicClass(ctx));
                         try {
                             if (logics[name]) {
                                 const valid = await logics[name].apply(logics, [ctx]);
-                                if(valid === false) return valid;
+                                if (valid === false) return valid;
                             }
                         } catch (error) {
                             await next();
                             return ctx.throw(500, error.message);
                         }
                         return await next();
-                    }, app.controller[controlName][name]);
+                    }];
+                    if ((app as any).jwt && config.secret !== false) { actions.push((app as any).jwt); }
+                    actions.push(app.controller[controlName][name]);
+                    app.router[method.toLocaleLowerCase()](path, ...actions);
                 } else {
-                    app.router[method.toLocaleLowerCase()](path, app.controller[controlName][name]);
+                    const actions: Function[] = [];
+                    if ((app as any).jwt && config.secret !== false) { actions.push((app as any).jwt); }
+                    actions.push(app.controller[controlName][name]);
+                    app.router[method.toLocaleLowerCase()](path, ...actions);
                 }
                 return app.router;
             }))));
