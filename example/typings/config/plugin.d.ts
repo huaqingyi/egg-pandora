@@ -15,7 +15,6 @@ import 'egg-static';
 import 'egg-jsonp';
 import 'egg-view';
 import 'egg-pandora';
-import 'egg-jwt';
 import { EggPluginItem } from 'egg';
 declare module 'egg' {
   interface EggPlugin {
@@ -32,6 +31,5 @@ declare module 'egg' {
     jsonp?: EggPluginItem;
     view?: EggPluginItem;
     pandora?: EggPluginItem;
-    jwt?: EggPluginItem;
   }
 }

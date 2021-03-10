@@ -66,10 +66,10 @@ export default (appInfo: EggAppInfo) => {
         typeorm: {
             type: 'mysql',
             host: '127.0.0.1',
-            port: 33066,
+            port: 13306,
             username: 'root',
-            password: 'jzzs2020',
-            database: 'jzzs',
+            password: '123456',
+            database: 'test',
             synchronize: true,
             logging: false,
             entities: ['app/entity/**/*.ts'],

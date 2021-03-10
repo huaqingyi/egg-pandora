@@ -229,8 +229,8 @@ export default class extends Controller {
         }
         console.log('body', body);
         const { ctx } = this;
-        console.log(await ctx.repo.User.count());
-        console.log(await ctx.repo.User.queryAll());
+        console.log(await ctx.repo(User).count());
+        console.log(await ctx.repo(User).queryAll());
         console.log(await ctx.vaildAOP(HomeDataDto, {}));
 
         // ctx.body = await ctx.service.test.sayHi('egg');
