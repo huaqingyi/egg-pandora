@@ -236,6 +236,14 @@ export default class extends Controller {
         // ctx.body = await ctx.service.test.sayHi('egg');
         ctx.body = await ctx.service.test.test();
     }
+
+    @RequestMapping
+    public async add() {
+        const { ctx } = this;
+        console.log(await ctx.repo(User).count());
+        console.log(await ctx.repo(User).queryAll());
+        ctx.body = await ctx.service.test.sayHi('egg');
+    }
 }
 ```
 
