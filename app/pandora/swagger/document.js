@@ -314,9 +314,11 @@ class Document {
                         const request = this.generateRequest(blocks[i], swagger);
                         path_method.parameters = this.formatRequest(request);
                         const response = this.generateResponse(blocks[i], swagger);
+                        // console.log(response, validationMetadatasToSchemas());
                         path_method.responses = {};
                         lodash_1.map(response, ([code, jname]) => {
                             if (code) {
+                                console.log(code, jname);
                                 if (!jname) {
                                     jname = 'object';
                                 }

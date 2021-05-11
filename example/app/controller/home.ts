@@ -9,6 +9,23 @@ import { HomeDataDto } from '../dto/home';
 export default class extends Controller {
 
     /**
+     * @summary 测试
+     * @router POST /home/test
+     * @request query string test 测试
+     * @request body string name 名字
+     * @consumes multipart/form-data
+     * @response default HomeDataDto
+     * @response 200 Test1
+     * @apikey
+     */
+    @RequestMapping({ path: 'test', methods: [RequestMethod.POST] })
+    public async test() {
+        console.log('query', this.ctx.request.query);
+        console.log('body', this.ctx.request.body);
+        this.ctx.body = {};
+    }
+
+    /**
      * @summary 创建资源
      * @router POST /home/index/{id}/{uid}
      * @request path string id ID

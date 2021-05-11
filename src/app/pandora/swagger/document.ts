@@ -358,6 +358,7 @@ export class Document {
                         path_method.parameters = this.formatRequest(request);
 
                         const response = this.generateResponse(blocks[i], swagger);
+                        // console.log(response, validationMetadatasToSchemas());
                         path_method.responses = {};
                         map(response, ([code, jname]) => {
                             if (code) {

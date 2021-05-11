@@ -178,19 +178,31 @@ export default (app: Application) => router(app);
 
 ```typescript
 import { Controller } from 'egg';
-import { createWriteStream } from 'fs';
-import { isArray } from 'lodash';
-import { join } from 'path';
-import pump from 'pump';
 import { RequestMapping, RequestMethod, RestController } from 'egg-pandora';
 import { HomeDataDto } from '../dto/home';
-import { User } from '../entity/user';
 
 /**
  * @controller home
  */
 @RestController
 export default class extends Controller {
+
+    /**
+     * @summary 测试
+     * @router POST /home/test
+     * @request query string test 测试
+     * @request body string name 名字
+     * @consumes multipart/form-data
+     * @response default HomeDataDto
+     * @response 200 Test1
+     * @apikey
+     */
+    @RequestMapping({ path: 'test', methods: [RequestMethod.POST] })
+    public async test() {
+        console.log('query', this.ctx.request.query);
+        console.log('body', this.ctx.request.body);
+        this.ctx.body = {};
+    }
 
     /**
      * @summary 创建资源
@@ -208,41 +220,16 @@ export default class extends Controller {
      */
     @RequestMapping({ path: 'index/:id/:uid', methods: [RequestMethod.POST] })
     public async index() {
-        console.log('db 使用', await ctx.repo(User).count());
-        console.log('db 使用', await ctx.repo(User).queryAll());
         console.log('path', this.ctx.params);
         console.log('query', this.ctx.request.query);
         console.log('header', this.ctx.request.headers);
-        // console.log('body', this.ctx.request.body);
-        const parts = this.ctx.multipart();
-        const body: { [x: string]: string } = {};
-        let stream;
-        while ((stream = await parts()) != null) {
-            if (isArray(stream)) {
-                body[stream[0]] = stream[1];
-            } else if (stream.filename) {
-                const filename = stream.filename.toLowerCase();
-                const target = join(this.config.baseDir, 'app/public', filename);
-                const writeStream = createWriteStream(target);
-                await pump(stream, writeStream);
-            }
-        }
-        console.log('body', body);
+        console.log('body', this.ctx.request.body);
+        console.log('file', this.ctx.request.files);
         const { ctx } = this;
-        console.log(await ctx.repo(User).count());
-        console.log(await ctx.repo(User).queryAll());
         console.log(await ctx.vaildAOP(HomeDataDto, {}));
 
         // ctx.body = await ctx.service.test.sayHi('egg');
         ctx.body = await ctx.service.test.test();
-    }
-
-    @RequestMapping
-    public async add() {
-        const { ctx } = this;
-        console.log(await ctx.repo(User).count());
-        console.log(await ctx.repo(User).queryAll());
-        ctx.body = await ctx.service.test.sayHi('egg');
     }
 }
 ```
