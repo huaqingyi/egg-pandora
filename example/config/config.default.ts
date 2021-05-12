@@ -93,5 +93,9 @@ export default (appInfo: EggAppInfo) => {
         // jwt: {
         //     secret: '123456'
         // },
+        passportGithub: {
+            key: `c8043d87e18f6e6b08c5`,
+            secret: `9831d8e058db3766735254122be87ceb08245287`,
+        },
     };
 };
