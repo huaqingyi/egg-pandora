@@ -8,7 +8,7 @@ export default class extends Logic {
         console.log('logic');
     }
 
-    public async index() {
+    public async test() {
         const rules: PandoraLogicRules = {
             name: {
                 string: true,

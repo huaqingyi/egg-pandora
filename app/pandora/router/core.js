@@ -54,25 +54,20 @@ class PandoraRouter {
             await Promise.all(lodash_1.map(actions, ({ config, name }) => Promise.all(lodash_1.map(config.methods, async (method) => {
                 const path = `${prefix}${config.path.startsWith('/') ? config.path : `/${config.path}`}`;
                 if (fs_1.existsSync(logicPath)) {
-                    const actions = [async (ctx, next) => {
-                            const LogicClass = (await Promise.resolve().then(() => __importStar(require(logicPath)))).default;
-                            const logics = (new LogicClass(ctx));
-                            try {
-                                if (logics[name]) {
-                                    const valid = await logics[name].apply(logics, [ctx]);
-                                    if (valid === false)
-                                        return valid;
-                                }
-                            }
-                            catch (error) {
-                                await next();
-                                return ctx.throw(500, error.message);
-                            }
-                            return await next();
-                        }];
+                    const LogicClass = (await Promise.resolve().then(() => __importStar(require(logicPath)))).default;
+                    const actions = [];
                     if (app.jwt && config.secret !== false) {
                         actions.push(app.jwt);
                     }
+                    actions.push(async (ctx, next) => {
+                        const logics = (new LogicClass(ctx));
+                        if (logics[name]) {
+                            const valid = await logics[name].apply(logics, [ctx]);
+                            if (valid === false)
+                                return valid;
+                        }
+                        return await next();
+                    });
                     actions.push(app.controller[controlName][name]);
                     app.router[method.toLocaleLowerCase()](path, ...actions);
                 }

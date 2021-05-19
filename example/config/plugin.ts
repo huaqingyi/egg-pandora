@@ -24,18 +24,18 @@ const plugin: EggPlugin = {
         enable: true,
         package: 'egg-multipart',
     },
-    // jwt: {
+    jwt: {
+        enable: true,
+        package: 'egg-jwt'
+    },
+    // passport: {
     //     enable: true,
-    //     package: 'egg-jwt'
+    //     package: 'egg-passport',
     // },
-    passport: {
-        enable: true,
-        package: 'egg-passport',
-    },
-    passportGithub: {
-        enable: true,
-        package: 'egg-passport-github',
-    },
+    // passportGithub: {
+    //     enable: true,
+    //     package: 'egg-passport-github',
+    // },
 };
 
 export default plugin;

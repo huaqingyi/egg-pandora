@@ -137,17 +137,20 @@ class Document {
         return request;
     }
     formatRequest(request) {
-        const { query, body, formData, path } = lodash_1.groupBy(lodash_1.map(request, ([rtype, type, name, desc, required]) => {
+        const { query, body, formData, path } = lodash_1.groupBy(lodash_1.map(request, ([rtype, type, name, desc, example, required]) => {
             if (rtype === 'formdata') {
                 rtype = 'formData';
             }
-            return { name, type, required: !(required === 'false' || required === 'no'), in: rtype, description: desc };
+            return { name, type, required: !(required === 'false' || required === 'no'), in: rtype, description: desc, example };
         }), 'in');
         let rbody = { type: 'object', properties: {}, required: [] };
         if (!formData) {
             if (body) {
                 lodash_1.map(body, (b) => {
                     rbody.properties[b.name] = { type: b.type, description: b.description };
+                    if (b.example) {
+                        rbody.properties[b.name].example = b.example;
+                    }
                     if (b.required === true) {
                         rbody.required.push(b.name);
                     }
@@ -318,7 +321,6 @@ class Document {
                         path_method.responses = {};
                         lodash_1.map(response, ([code, jname]) => {
                             if (code) {
-                                console.log(code, jname);
                                 if (!jname) {
                                     jname = 'object';
                                 }

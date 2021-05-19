@@ -176,15 +176,16 @@ export class Document {
     }
 
     public formatRequest(request: string[][]) {
-        const { query, body, formData, path } = groupBy(map(request, ([rtype, type, name, desc, required]) => {
+        const { query, body, formData, path } = groupBy(map(request, ([rtype, type, name, desc, example, required]) => {
             if (rtype === 'formdata') { rtype = 'formData'; }
-            return { name, type, required: !(required === 'false' || required === 'no'), in: rtype, description: desc };
+            return { name, type, required: !(required === 'false' || required === 'no'), in: rtype, description: desc, example };
         }), 'in');
         let rbody: any = { type: 'object', properties: {}, required: [] };
         if (!formData) {
             if (body) {
                 map(body, (b: any) => {
                     rbody.properties[b.name] = { type: b.type, description: b.description };
+                    if (b.example) { rbody.properties[b.name].example = b.example; }
                     if (b.required === true) { rbody.required.push(b.name); }
                 });
                 rbody = [{ name: 'data', in: 'body', schema: rbody }];

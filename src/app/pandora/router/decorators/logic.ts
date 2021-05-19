@@ -108,6 +108,13 @@ export class Logic extends Controller {
             return true;
         } else { return ret; }
     }
+
+    public validation(rules: PandoraLogicRules, msgs?: PandoraLogicRuleMsg) {
+        const ret = this.validator.validate(this._rulesParse(rules), msgs);
+        if (isEmpty(ret)) {
+            return true;
+        } else { return Promise.reject(ret); }
+    }
 }
 
 export const PandoraForm = {

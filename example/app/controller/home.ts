@@ -18,7 +18,7 @@ export default class extends Controller {
      * @response 200 Test1
      * @apikey
      */
-    @RequestMapping({ path: 'test', methods: [RequestMethod.POST] })
+    @RequestMapping({ path: 'test', methods: [RequestMethod.POST], secret: false })
     public async test() {
         console.log('query', this.ctx.request.query);
         console.log('body', this.ctx.request.body);

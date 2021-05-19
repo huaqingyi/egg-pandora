@@ -32,6 +32,15 @@ class Logic extends egg_1.Controller {
             return ret;
         }
     }
+    validation(rules, msgs) {
+        const ret = this.validator.validate(this._rulesParse(rules), msgs);
+        if (lodash_1.isEmpty(ret)) {
+            return true;
+        }
+        else {
+            return Promise.reject(ret);
+        }
+    }
 }
 exports.Logic = Logic;
 exports.PandoraForm = {

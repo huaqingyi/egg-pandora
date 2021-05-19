@@ -88,6 +88,7 @@ export declare class Logic extends Controller {
     constructor(ctx: Context);
     private _rulesParse;
     validate(rules: PandoraLogicRules, msgs?: PandoraLogicRuleMsg): any;
+    validation(rules: PandoraLogicRules, msgs?: PandoraLogicRuleMsg): true | Promise<never>;
 }
 export declare const PandoraForm: {
     param(this: Context, name?: string | undefined): string | import("egg").PlainObject<string>;

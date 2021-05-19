@@ -38,23 +38,19 @@ export class PandoraRouter {
 
             await Promise.all(map(actions, ({ config, name }) => Promise.all(map(config.methods, async method => {
                 const path = `${prefix}${config.path.startsWith('/') ? config.path : `/${config.path}`}`;
-
+                
                 if (existsSync(logicPath)) {
-                    const actions = [async (ctx: Context, next) => {
-                        const LogicClass = (await import(logicPath)).default;
+                    const LogicClass = (await import(logicPath)).default;
+                    const actions: any[] = [];
+                    if ((app as any).jwt && config.secret !== false) { actions.push((app as any).jwt); }
+                    actions.push(async (ctx: Context, next) => {
                         const logics = (new LogicClass(ctx));
-                        try {
-                            if (logics[name]) {
-                                const valid = await logics[name].apply(logics, [ctx]);
-                                if (valid === false) return valid;
-                            }
-                        } catch (error) {
-                            await next();
-                            return ctx.throw(500, error.message);
+                        if (logics[name]) {
+                            const valid = await logics[name].apply(logics, [ctx]);
+                            if (valid === false) return valid;
                         }
                         return await next();
-                    }];
-                    if ((app as any).jwt && config.secret !== false) { actions.push((app as any).jwt); }
+                    });
                     actions.push(app.controller[controlName][name]);
                     app.router[method.toLocaleLowerCase()](path, ...actions);
                 } else {
