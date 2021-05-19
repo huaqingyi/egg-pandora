@@ -1,7 +1,7 @@
 import { Controller } from 'egg';
 import { IsObject, IsString, IsInt, Min, Max, Dto, JSONSchema } from 'egg-pandora';
 
-export function Exception(_t: object, _p: string, descr: TypedPropertyDescriptor<Function>) {
+export function Exception(_t: object, _p: string, descr: PropertyDescriptor) {
     const action = descr.value;
     descr.value = function (this: Controller, ...props) {
         let result;
