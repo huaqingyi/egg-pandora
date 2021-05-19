@@ -3,25 +3,17 @@ import { IsObject, IsString, IsInt, Min, Max, Dto, JSONSchema } from 'egg-pandor
 
 export function Exception(_t: object, _p: string, descr: PropertyDescriptor) {
     const action = descr.value;
-    descr.value = function (this: Controller, ...props) {
-        let result;
+    descr.value = async function (this: Controller, ...props) {
         let resp = new ResponseDto();
         try {
-            result = action?.apply(this, props);
+            resp.data = await action?.apply(this, props);
+            this.ctx.body = resp;
         } catch (err) {
             resp.errmsg = err.message;
             resp.error = err;
             resp.errno = 1000;
             this.ctx.body = resp;
-        }
-        if (result.then) {
-            result.then(body => {
-                resp.data = body;
-                this.ctx.body = resp;
-            });
-        } else {
-            resp.data = result;
-            this.ctx.body = resp;
+            return false;
         }
     }
 }

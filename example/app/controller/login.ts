@@ -1,5 +1,6 @@
 import { Controller } from 'egg';
 import { RequestMapping, RequestMethod, RestController } from 'egg-pandora';
+import { Exception } from '../dto/base';
 
 /**
  * @controller login
@@ -15,6 +16,7 @@ export default class extends Controller {
      * @response 200 LoginResponseDto
      * @apikey
      */
+    @Exception
     @RequestMapping({ path: '/', methods: [RequestMethod.POST], secret: false })
     public async login() {
         console.log(1111, this.ctx.post());
