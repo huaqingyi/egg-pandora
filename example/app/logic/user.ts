@@ -1,14 +1,37 @@
-import { Logic } from 'egg-pandora';
-import { Context } from 'egg';
+import { Logic, PandoraLogicRules, RequestMethod } from 'egg-pandora';
+import { Exception } from '@dto/base';
 
 export default class extends Logic {
 
-    constructor(ctx: Context) {
-        super(ctx);
-        console.log('logic');
+    @Exception
+    public async register() {
+        const rules: PandoraLogicRules = {
+            email: {
+                email: true, required: true,
+                method: [RequestMethod.POST],
+            },
+            password: {
+                string: true, required: true,
+                length: { min: 6, max: 20 },
+                method: [RequestMethod.POST],
+            },
+        };
+        return this.validation(rules);
     }
 
-    public async add() {
-        console.log(11111111111);
+    @Exception
+    public async login() {
+        const rules: PandoraLogicRules = {
+            email: {
+                email: true, required: true,
+                method: [RequestMethod.POST],
+            },
+            password: {
+                string: true, required: true,
+                length: { min: 6, max: 20 },
+                method: [RequestMethod.POST],
+            },
+        };
+        return this.validation(rules);
     }
 }

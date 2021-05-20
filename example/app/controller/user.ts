@@ -1,54 +1,68 @@
 import { Controller } from 'egg';
 import { RequestMapping, RequestMethod, RestController } from 'egg-pandora';
-import { User } from '../entity/user';
+import { Exception } from '@dto/base';
+import '@dto/user';
 
-@RestController('')
+/**
+ * @controller user
+ */
+@RestController
 export default class extends Controller {
 
-    @RequestMapping
-    public async add() {
-        const { ctx } = this;
-        console.log(await ctx.repo(User).count());
-        console.log(await ctx.repo(User).queryAll());
-        ctx.body = await ctx.service.test.sayHi('egg');
+    /**
+     * @summary 用户注册
+     * @router POST /user/register
+     * @request body string email 邮箱地址 2304816231@qq.com
+     * @request body string password 密码 123456
+     * @response 200 UserResponseDto
+     * @apikey
+     */
+    @Exception
+    @RequestMapping({ path: '/register', methods: [RequestMethod.POST], secret: false })
+    public async register() {
+        return await this.service.user.addUser(this.ctx.post());
     }
 
-    @RequestMapping({ path: '/test1', methods: [RequestMethod.GET] })
-    public async test() {
-        const { ctx } = this;
-        ctx.body = await ctx.service.test.sayHi('egg');
+    /**
+     * @summary 用户注册
+     * @router POST /user/login
+     * @request body string email 邮箱地址 2304816231@qq.com
+     * @request body string password 密码 123456
+     * @response 200 UserResponseDto
+     * @apikey
+     */
+    @Exception
+    @RequestMapping({ path: '/login', methods: [RequestMethod.POST], secret: false })
+    public async login() {
+        const user = { ...await this.service.user.verify(this.ctx.post()) };
+        delete (user as any).password;
+        const token = this.app.jwt.sign(user, this.app.config.jwt.secret);
+        this.ctx.set('authorization', token);
+        return user;
     }
 
-    @RequestMapping
-    public async logout(){
-        this.ctx.logout();
-    }
-
-    @RequestMapping
-    public async render() {
-        const ctx = this.ctx;
-
-        if (ctx.isAuthenticated()) {
-            ctx.body = `<div>
-            <h2>${ctx.path}</h2>
-            <hr>
-            Logined user: <img src="${ctx.user.photo}"> ${ctx.user.displayName} / ${ctx.user.id} | <a href="/user/logout">Logout</a>
-            <pre><code>${JSON.stringify(ctx.user, null, 2)}</code></pre>
-            <hr>
-            <a href="/">Home</a> | <a href="/user">User</a>
-          </div>`;
-        } else {
-            ctx.session.returnTo = ctx.path;
-            ctx.body = `
-            <div>
-              <h2>${ctx.path}</h2>
-              <hr>
-              Login with
-              <a href="/passport/github">Github</a> | <a href="/passport/weixin">微信</a>
-              <hr>
-              <a href="/">Home</a> | <a href="/user">User</a>
-            </div>
-          `;
-        }
+    /**
+     * @summary 测试接口资源
+     * @router POST /user/index/{id}/{uid}
+     * @request path string id ID
+     * @request path string uid UID
+     * @request query string test 测试
+     * @request query string test1 测试1
+     * @request formdata file file 文件 false
+     * @request formdata file file1 文件1 false
+     * @request body string name 名字
+     * @request body string age 年龄
+     * @consumes multipart/form-data
+     * @apikey
+     */
+    @Exception
+    @RequestMapping({ path: 'index/:id/:uid', methods: [RequestMethod.POST] })
+    public async index() {
+        console.log('path', this.ctx.params);
+        console.log('query', this.ctx.request.query);
+        console.log('header', this.ctx.headers);
+        console.log('body', this.ctx.request.body);
+        console.log('file', this.ctx.request.files);
+        return {};
     }
 }

@@ -1,6 +1,5 @@
-import { validate, ValidationError, ValidationSchema } from 'class-validator';
+import { validate, ValidationError } from 'class-validator';
 import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
-import { SchemaObject } from 'openapi3-ts';
 import { map } from 'lodash';
 
 export const AOP = {

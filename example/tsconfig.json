@@ -21,7 +21,28 @@
     "skipDefaultLibCheck": true,
     "inlineSourceMap": true,
     "importHelpers": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./app/*"
+      ],
+      "@controller/*": [
+        "./app/controller/*"
+      ],
+      "@dto/*": [
+        "./app/dto/*"
+      ],
+      "@logic/*": [
+        "./app/logic/*"
+      ],
+      "@entity/*": [
+        "./app/entity/*"
+      ],
+      "@service/*": [
+        "./app/service/*"
+      ]
+    }
   },
   "exclude": [
     "app/public",

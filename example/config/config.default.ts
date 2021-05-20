@@ -10,7 +10,7 @@ export default (appInfo: EggAppInfo) => {
     config.keys = appInfo.name + '_1605494805703_9866';
 
     // add your egg config in here
-    config.middleware = [];
+    config.middleware = [ 'exception' ];
 
     // add your special config in here
     const bizConfig = {
@@ -32,7 +32,7 @@ export default (appInfo: EggAppInfo) => {
         securityDefinitions: {
             apikey: {
                 type: 'apiKey',
-                name: 'accesstoken',
+                name: 'Authorization',
                 in: 'header',
             },
             // oauth2: {
@@ -71,7 +71,7 @@ export default (appInfo: EggAppInfo) => {
             password: 'jzzs2020',
             database: 'jzzs',
             synchronize: true,
-            logging: false,
+            logging: true,
             entities: ['app/entity/**/*.ts'],
             migrations: ['app/migration/**/*.ts'],
             subscribers: ['app/subscriber/**/*.ts'],
@@ -82,6 +82,7 @@ export default (appInfo: EggAppInfo) => {
             },
         },
         multipart: {
+            fileSize: '100mb',
             mode: 'file',
             tmpdir: join(tmpdir(), 'pandora', appInfo.name),
             cleanSchedule: {
@@ -91,11 +92,7 @@ export default (appInfo: EggAppInfo) => {
             },
         },
         jwt: {
-            secret: '123456'
+            secret: '123456',
         },
-        // passportGithub: {
-        //     key: `c8043d87e18f6e6b08c5`,
-        //     secret: `9831d8e058db3766735254122be87ceb08245287`,
-        // },
     };
 };
