@@ -1,6 +1,6 @@
 {
   "name": "egg-pandora",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "description": "egg pandora 套件",
   "eggPlugin": {
     "name": "pandora",
