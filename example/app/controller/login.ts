@@ -5,12 +5,12 @@ import { Exception } from '../dto/base';
 /**
  * @controller login
  */
-@RestController
+@RestController(['/login', '/v1/login'])
 export default class extends Controller {
 
     /**
      * @summary 登录
-     * @router POST /login
+     * @router POST /login false
      * @request body number telephone 电话号码 18900000000
      * @request body string password 密码
      * @response 200 LoginResponseDto

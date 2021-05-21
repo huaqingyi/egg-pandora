@@ -1,17 +1,22 @@
 import { Controller } from 'egg';
-import { RequestMapping, RequestMethod, RestController } from 'egg-pandora';
+import { RequestMapping, RequestMethod, RestController, Before, ABefore } from 'egg-pandora';
 import { Exception } from '@dto/base';
 import '@dto/user';
 
 /**
  * @controller user
  */
-@RestController
+@Before((ctx, next) => {
+    ctx.body = { name: 'test' };
+    return next();
+})
+@RestController(['/user', '/v1/user'])
 export default class extends Controller {
 
     /**
      * @summary 用户注册
-     * @router POST /user/register
+     * @router POST /user/register false
+     * @router POST /v1/user/register
      * @request body string email 邮箱地址 2304816231@qq.com
      * @request body string password 密码 123456
      * @response 200 UserResponseDto
@@ -25,13 +30,18 @@ export default class extends Controller {
 
     /**
      * @summary 用户注册
-     * @router POST /user/login
+     * @router POST /user/login false
+     * @router POST /v1/user/login
      * @request body string email 邮箱地址 2304816231@qq.com
      * @request body string password 密码 123456
      * @response 200 UserResponseDto
      * @apikey
      */
     @Exception
+    @ABefore((ctx, next) => {
+        ctx.body = { name: 'test1' };
+        return next();
+    })
     @RequestMapping({ path: '/login', methods: [RequestMethod.POST], secret: false })
     public async login() {
         const user = { ...await this.service.user.verify(this.ctx.post()) };
@@ -43,7 +53,8 @@ export default class extends Controller {
 
     /**
      * @summary 测试接口资源
-     * @router POST /user/index/{id}/{uid}
+     * @router POST /user/index/{id}/{uid} false
+     * @router POST /v1/user/index/{id}/{uid}
      * @request path string id ID
      * @request path string uid UID
      * @request query string test 测试

@@ -306,6 +306,7 @@ class Document {
                     const direct = `${filepath.split(/\.(js|ts)/)[0].split('app')[1].substr(1)}`;
                     // 解析路由
                     const routers = this.getComment(blocks[i], constant_1.default.ROUTER);
+                    // console.log(123, routers);
                     if (routers) {
                         const path_method = {};
                         path_method.tags = [tagName];
@@ -342,17 +343,33 @@ class Document {
                         });
                         path_method.security = this.generateSecurity(blocks[i], securitys, swagger);
                         path_method.deprecated = this.isDeprecated(blocks[i]);
-                        if (!routerlist.includes(routers[0][2])) {
-                            paths[routers[0][2]] = {};
-                        }
-                        routerlist.push(routers[0][2]);
-                        paths[routers[0][2]][routers[0][1].toLowerCase()] = path_method;
-                        const router = {
-                            method: routers[0][1].toLowerCase(),
-                            route: routers[0][2],
-                            func: func[i - 1],
-                        };
-                        bundler.routers.push(router);
+                        lodash_1.map(routers, routes => {
+                            if (routes[3] === 'false' || routes[3] === 'no')
+                                return routes;
+                            if (!routerlist.includes(routes[2])) {
+                                paths[routes[2]] = {};
+                            }
+                            routerlist.push(routes[2]);
+                            paths[routes[2]][routes[1].toLowerCase()] = path_method;
+                            const router = {
+                                method: routes[1].toLowerCase(),
+                                route: routes[2],
+                                func: func[i - 1],
+                            };
+                            bundler.routers.push(router);
+                            return routes;
+                        });
+                        // if (!routerlist.includes(routers[0][2])) {
+                        //     paths[routers[0][2]] = {};
+                        // }
+                        // routerlist.push(routers[0][2]);
+                        // paths[routers[0][2]][routers[0][1].toLowerCase()] = path_method;
+                        // const router = {
+                        //     method: routers[0][1].toLowerCase(),
+                        //     route: routers[0][2],
+                        //     func: func[i - 1],
+                        // };
+                        // bundler.routers.push(router);
                     }
                 }
             }

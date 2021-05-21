@@ -1,5 +1,5 @@
 import { Controller } from 'egg';
-import { isString } from 'lodash';
+import { isRegExp, isString, isArray } from 'lodash';
 import { pandorouter } from '../core';
 import { PANDORAROUTER, PANDORAROUTEREABLE, PANDORAROUTES } from '../preconst';
 
@@ -20,12 +20,21 @@ export interface RequestMappingOption {
     secret?: boolean;
 }
 
+export type RestControllerOption = string | RegExp;
+
 export function RestController<T extends (new (...props: any) => Controller)>(target: T): T;
-export function RestController(path: string): <T extends (new (...props: any) => Controller) >(target: T) => T;
+export function RestController(path: RestControllerOption | RestControllerOption[]): <T extends (new (...props: any) => Controller) >(target: T) => T;
 export function RestController(props: any) {
-    if (isString(props)) {
+    const isPath = isString(props) || isRegExp(props);
+    const isArrPath = isArray(props) && (isString(props[0]) || isRegExp(props[0]));
+    if (isPath || isArrPath) {
         return <T extends (new (...props: any) => Controller)>(target: T) => {
-            target[PANDORAROUTER] = props;
+            
+            const router: RestControllerOption[] = [];
+            if (isPath) router.push(props);
+            else router.push(...props);
+
+            target[PANDORAROUTER] = router;
             target[PANDORAROUTEREABLE] = true;
             pandorouter.routes.push(target);
             return target;

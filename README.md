@@ -178,25 +178,34 @@ export default (app: Application) => router(app);
 
 ```typescript
 import { Controller } from 'egg';
-import { RequestMapping, RequestMethod, RestController } from 'egg-pandora';
+import { RequestMapping, RequestMethod, RestController, Before, ABefore } from 'egg-pandora';
 import { HomeDataDto } from '../dto/home';
 
 /**
  * @controller home
  */
+@Before((ctx, next) => {
+    ctx.body = { name: 'test' };
+    return next();
+})
 @RestController
+// @RestController(['/home', '/v1/home'])
 export default class extends Controller {
 
     /**
      * @summary 测试
-     * @router POST /home/test
+     * @router POST /home/test false
+     * @router POST /v1/home/test
      * @request query string test 测试
      * @request body string name 名字
-     * @consumes multipart/form-data
      * @response default HomeDataDto
      * @response 200 Test1
      * @apikey
      */
+    @ABefore((ctx, next) => {
+        ctx.body = { name: 'test1' };
+        return next();
+    })
     @RequestMapping({ path: 'test', methods: [RequestMethod.POST] })
     public async test() {
         console.log('query', this.ctx.request.query);
@@ -239,19 +248,49 @@ export default class extends Controller {
 * 习惯了非常好用哦 非常推荐
 
 ```typescript
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { TypeOrm } from 'egg-pandora';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { PColumn, IsDate, IsEmail, IsInt, Length, TypeOrm } from 'egg-pandora';
 
+export enum UserType {
+    WX = 'WX', QQ = 'QQ', DEFAULT = 'DEFAULT',
+}
+
+// PColumn 可自动生成 JSONschema 注释
 @Entity()
 export class User extends TypeOrm<User> {
 
-    @PrimaryGeneratedColumn()
+    @IsInt()
+    @PColumn(PrimaryGeneratedColumn, { comment: '用户 ID' })
     public id!: number;
 
-    @Column()
-    public name!: string;
+    @IsEmail()
+    @PColumn(Column, { type: 'varchar', length: 50, nullable: false, comment: '邮箱' })
+    public email!: string;
+
+    @Column({ type: 'varchar', length: 100, nullable: true, comment: '密码' })
+    public password!: string;
+
+    @Length(1, 10)
+    @PColumn(Column, {
+        length: 10, nullable: false, default: UserType.DEFAULT,
+        type: 'char', comment: '平台 QQ WX 等 默认 defaut',
+    })
+    public type!: string;
+
+    @IsInt()
+    @PColumn(Column, { type: 'int', nullable: false, default: 0, comment: '是否激活' })
+    public isActived!: number;
+
+    @IsDate()
+    @PColumn(CreateDateColumn, { type: 'timestamp', nullable: false, comment: '创建时间' })
+    public createdAt!: Date;
+
+    @IsDate()
+    @PColumn(UpdateDateColumn, { type: 'timestamp', nullable: false, comment: '修改时间', update: true })
+    public updatedAt!: Date;
 
     public async queryAll() {
+        // 可以使用 query builder sql 等 ...
         return this.findAndCount();
     }
 }
@@ -262,35 +301,10 @@ export class User extends TypeOrm<User> {
 * app/dto/home.ts
 
 ```typescript
-import {
-    Contains, IsInt, Length, IsEmail, IsFQDN, Dto,
-    IsDate, Min, Max, ValidateNested, IsString, IsEmpty,
-} from 'egg-pandora';
+import { IsNotEmpty, ValidateNested, Dto } from 'egg-pandora';
+import { User } from '@entity/user';
 
-export class Test1 extends Dto {
-
-    @Length(10, 20)
-    public title!: string;
-
-    @Contains('hello')
-    public text!: string;
-
-    @IsInt()
-    @Min(0)
-    @Max(10)
-    public rating!: number;
-
-    @IsEmail()
-    public email!: string;
-
-    @IsFQDN()
-    public site!: string;
-
-    @IsDate()
-    public createDate!: Date;
-}
-
-export class HomeDataDto extends Dto {
+export class UserResponseDto extends Dto {
 
     @IsString()
     public error!: string;
@@ -298,10 +312,9 @@ export class HomeDataDto extends Dto {
     public errno!: number;
 
     @ValidateNested()
-    @IsEmpty()
-    public data?: Test1;
+    @IsNotEmpty()
+    public data: User;
 }
-
 ```
 
 * logic 层 做数据验证 这里对用 controller 的 文件名 和目录结构

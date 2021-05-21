@@ -42,44 +42,71 @@ class PandoraRouter {
             }
             ;
             const actions = control[preconst_1.PANDORAROUTES];
-            let prefix = control[preconst_1.PANDORAROUTER];
+            let prefixs = control[preconst_1.PANDORAROUTER];
             const fullPath = control.prototype.fullPath.
                 split('\\').join('/').
                 replace(/[\/]{2,9}/g, '/').
                 replace(/(\.ts)|(\.js)/g, '');
             const controlName = fullPath.substring(fullPath.indexOf('controller/') + 'controller/'.length);
-            prefix = prefix || fullPath.substring(fullPath.indexOf('controller/') + 'controller/'.length);
-            prefix = prefix.startsWith('/') ? prefix : '/' + prefix;
+            prefixs = prefixs || [fullPath.substring(fullPath.indexOf('controller/') + 'controller/'.length)];
+            // prefix = prefix.startsWith('/') ? prefix : '/' + prefix;
             const logicPath = control.prototype.fullPath.split('controller/').join('logic/');
             await Promise.all(lodash_1.map(actions, ({ config, name }) => Promise.all(lodash_1.map(config.methods, async (method) => {
-                const path = `${prefix}${config.path.startsWith('/') ? config.path : `/${config.path}`}`;
-                if (fs_1.existsSync(logicPath)) {
-                    const LogicClass = (await Promise.resolve().then(() => __importStar(require(logicPath)))).default;
-                    const actions = [];
-                    if (app.jwt && config.secret !== false) {
-                        actions.push(app.jwt);
+                const ciddles = control[preconst_1.PANDORACONTROLMIDLE] || [];
+                const aiddles = (control[preconst_1.PANDORAACTIONMIDLE] || {})[name] || [];
+                const middlewares = ciddles.concat(aiddles);
+                return Promise.all(lodash_1.map(prefixs, async (prefix) => {
+                    let path = ``;
+                    if (lodash_1.isRegExp(prefix)) {
+                        // /prefix/.source + /config.path/.source
+                        if (lodash_1.isRegExp(config.path))
+                            path = new RegExp(`${prefix.source + config.path.source}$`, 'gi');
+                        // /prefix/.source + (new RegExp(config.path)).source
+                        else
+                            path = new RegExp(`${prefix.source + (new RegExp(config.path)).source}$`, 'gi');
                     }
-                    actions.push(async (ctx, next) => {
-                        const logics = (new LogicClass(ctx));
-                        if (logics[name]) {
-                            const valid = await logics[name].apply(logics, [ctx]);
-                            if (valid === false)
-                                return valid;
+                    else {
+                        // (new RegExp('prefix')).source + config.path.source
+                        if (lodash_1.isRegExp(config.path))
+                            path = new RegExp(`${(new RegExp(prefix)).source + config.path.source}$`, 'gi');
+                        // 'prefix/config.path'
+                        else {
+                            const paths = `${prefix}/${config.path}`.split('//').join('/').split('');
+                            const p = paths.pop() || '';
+                            if (p !== '/') {
+                                paths.push(p);
+                            }
+                            path = paths.join('');
                         }
-                        return await next();
-                    });
-                    actions.push(app.controller[controlName][name]);
-                    app.router[method.toLocaleLowerCase()](path, ...actions);
-                }
-                else {
-                    const actions = [];
-                    if (app.jwt && config.secret !== false) {
-                        actions.push(app.jwt);
                     }
-                    actions.push(app.controller[controlName][name]);
-                    app.router[method.toLocaleLowerCase()](path, ...actions);
-                }
-                return app.router;
+                    if (fs_1.existsSync(logicPath)) {
+                        const LogicClass = (await Promise.resolve().then(() => __importStar(require(logicPath)))).default;
+                        const actions = [];
+                        if (app.jwt && config.secret !== false) {
+                            actions.push(app.jwt);
+                        }
+                        actions.push(async (ctx, next) => {
+                            const logics = (new LogicClass(ctx));
+                            if (logics[name]) {
+                                const valid = await logics[name].apply(logics, [ctx]);
+                                if (valid === false)
+                                    return valid;
+                            }
+                            return await next();
+                        });
+                        actions.push(app.controller[controlName][name]);
+                        app.router[method.toLocaleLowerCase()](path, ...middlewares, ...actions);
+                    }
+                    else {
+                        const actions = [];
+                        if (app.jwt && config.secret !== false) {
+                            actions.push(app.jwt);
+                        }
+                        actions.push(app.controller[controlName][name]);
+                        app.router[method.toLocaleLowerCase()](path, ...middlewares, ...actions);
+                    }
+                    return app.router;
+                }));
             }))));
             return control;
         }));

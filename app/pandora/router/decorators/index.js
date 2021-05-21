@@ -11,6 +11,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./controller"), exports);
+__exportStar(require("./before"), exports);
 __exportStar(require("./logic"), exports);
 
 //# sourceMappingURL=../../../../sourcemaps/app/pandora/router/decorators/index.js.map

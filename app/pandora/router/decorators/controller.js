@@ -16,9 +16,16 @@ var RequestMethod;
     RequestMethod["ALL"] = "ALL";
 })(RequestMethod = exports.RequestMethod || (exports.RequestMethod = {}));
 function RestController(props) {
-    if (lodash_1.isString(props)) {
+    const isPath = lodash_1.isString(props) || lodash_1.isRegExp(props);
+    const isArrPath = lodash_1.isArray(props) && (lodash_1.isString(props[0]) || lodash_1.isRegExp(props[0]));
+    if (isPath || isArrPath) {
         return (target) => {
-            target[preconst_1.PANDORAROUTER] = props;
+            const router = [];
+            if (isPath)
+                router.push(props);
+            else
+                router.push(...props);
+            target[preconst_1.PANDORAROUTER] = router;
             target[preconst_1.PANDORAROUTEREABLE] = true;
             core_1.pandorouter.routes.push(target);
             return target;
