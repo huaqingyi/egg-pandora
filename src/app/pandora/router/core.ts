@@ -33,7 +33,7 @@ export class PandoraRouter {
                 replace(/(\.ts)|(\.js)/g, '');
 
             const controlName = fullPath.substring(fullPath.indexOf('controller/') + 'controller/'.length);
-            prefixs = prefixs || [fullPath.substring(fullPath.indexOf('controller/') + 'controller/'.length)];
+            prefixs = prefixs || [`/${fullPath.substring(fullPath.indexOf('controller/') + 'controller/'.length)}`];
             // prefix = prefix.startsWith('/') ? prefix : '/' + prefix;
             const logicPath = control.prototype.fullPath.split('controller/').join('logic/');
             await Promise.all(map(actions, ({ config, name }) => Promise.all(map(config.methods, async method => {
@@ -59,7 +59,7 @@ export class PandoraRouter {
                             path = paths.join('');
                         }
                     }
-
+                    console.log(111, path);
                     if (existsSync(logicPath)) {
                         const LogicClass = (await import(logicPath)).default;
                         const actions: any[] = [];

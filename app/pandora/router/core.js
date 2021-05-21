@@ -48,7 +48,7 @@ class PandoraRouter {
                 replace(/[\/]{2,9}/g, '/').
                 replace(/(\.ts)|(\.js)/g, '');
             const controlName = fullPath.substring(fullPath.indexOf('controller/') + 'controller/'.length);
-            prefixs = prefixs || [fullPath.substring(fullPath.indexOf('controller/') + 'controller/'.length)];
+            prefixs = prefixs || [`/${fullPath.substring(fullPath.indexOf('controller/') + 'controller/'.length)}`];
             // prefix = prefix.startsWith('/') ? prefix : '/' + prefix;
             const logicPath = control.prototype.fullPath.split('controller/').join('logic/');
             await Promise.all(lodash_1.map(actions, ({ config, name }) => Promise.all(lodash_1.map(config.methods, async (method) => {
@@ -79,6 +79,7 @@ class PandoraRouter {
                             path = paths.join('');
                         }
                     }
+                    console.log(111, path);
                     if (fs_1.existsSync(logicPath)) {
                         const LogicClass = (await Promise.resolve().then(() => __importStar(require(logicPath)))).default;
                         const actions = [];
