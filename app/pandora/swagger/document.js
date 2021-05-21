@@ -51,7 +51,6 @@ class Document {
             securityDefinitions: swagger.securityDefinitions,
             definitions: class_validator_jsonschema_1.validationMetadatasToSchemas(),
         };
-        // console.log(DOCUMENT.paths['/home/index'].post);
         app.use(swagger_ui_koa_1.default.serve);
         app.use(koa_convert_1.default(koa_mount_1.default(`/${swagger.DOCPath}`.replace('//', '/'), swagger_ui_koa_1.default.setup(DOCUMENT))));
         app.use(koa_convert_1.default(koa_mount_1.default(`/${swagger.DOCJSONPath}`.replace('//', '/'), async (ctx) => {
@@ -306,7 +305,6 @@ class Document {
                     const direct = `${filepath.split(/\.(js|ts)/)[0].split('app')[1].substr(1)}`;
                     // 解析路由
                     const routers = this.getComment(blocks[i], constant_1.default.ROUTER);
-                    // console.log(123, routers);
                     if (routers) {
                         const path_method = {};
                         path_method.tags = [tagName];
@@ -318,7 +316,6 @@ class Document {
                         const request = this.generateRequest(blocks[i], swagger);
                         path_method.parameters = this.formatRequest(request);
                         const response = this.generateResponse(blocks[i], swagger);
-                        // console.log(response, validationMetadatasToSchemas());
                         path_method.responses = {};
                         lodash_1.map(response, ([code, jname]) => {
                             if (code) {

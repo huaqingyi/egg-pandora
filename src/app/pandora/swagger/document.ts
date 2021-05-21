@@ -79,8 +79,6 @@ export class Document {
             definitions: validationMetadatasToSchemas(),
         };
 
-        // console.log(DOCUMENT.paths['/home/index'].post);
-
         app.use(swaggerUI.serve);
         app.use(convert(mount(`/${swagger.DOCPath}`.replace('//', '/'), swaggerUI.setup(DOCUMENT))));
         app.use(convert(mount(`/${swagger.DOCJSONPath}`.replace('//', '/'), async ctx => {
@@ -346,7 +344,6 @@ export class Document {
                     const direct = `${filepath.split(/\.(js|ts)/)[0].split('app')[1].substr(1)}`;
                     // 解析路由
                     const routers = this.getComment(blocks[i], _.ROUTER);
-                    // console.log(123, routers);
                     if (routers) {
                         const path_method: any = {};
                         path_method.tags = [tagName];
@@ -360,7 +357,6 @@ export class Document {
                         path_method.parameters = this.formatRequest(request);
 
                         const response = this.generateResponse(blocks[i], swagger);
-                        // console.log(response, validationMetadatasToSchemas());
                         path_method.responses = {};
                         map(response, ([code, jname]) => {
                             if (code) {

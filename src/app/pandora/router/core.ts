@@ -59,10 +59,12 @@ export class PandoraRouter {
                             path = paths.join('');
                         }
                     }
-                    console.log(111, path);
+
+                    console.info(`${method.toLocaleLowerCase()} ${path}`);
+
                     if (existsSync(logicPath)) {
                         const LogicClass = (await import(logicPath)).default;
-                        const actions: any[] = [];
+                        let actions: any[] = [];
 
                         if ((app as any).jwt && config.secret !== false) { actions.push((app as any).jwt); }
                         actions.push(async (ctx: Context, next) => {
@@ -73,13 +75,15 @@ export class PandoraRouter {
                             }
                             return await next();
                         });
+                        actions = actions.concat(middlewares);
                         actions.push(app.controller[controlName][name]);
-                        app.router[method.toLocaleLowerCase()](path, ...middlewares, ...actions);
+                        app.router[method.toLocaleLowerCase()](path, ...actions);
                     } else {
-                        const actions: Function[] = [];
+                        let actions: Function[] = [];
                         if ((app as any).jwt && config.secret !== false) { actions.push((app as any).jwt); }
+                        actions = actions.concat(middlewares);
                         actions.push(app.controller[controlName][name]);
-                        app.router[method.toLocaleLowerCase()](path, ...middlewares, ...actions);
+                        app.router[method.toLocaleLowerCase()](path, ...actions);
                     }
                     return app.router;
                 }));
