@@ -1,5 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { PColumn, IsDate, IsEmail, IsInt, TypeOrm, IsString, IsEnum } from 'egg-pandora';
+import { PColumn, IsDate, IsEmail, IsInt, TypeOrm, IsString, IsEnum, join, JoinType } from 'egg-pandora';
+import { UserInfo } from './user.info';
+// import { map, isArray, groupBy } from 'lodash';
 
 export enum UserType {
     WX = 'WX', QQ = 'QQ', DEFAULT = 'DEFAULT',
@@ -41,6 +43,42 @@ export class User extends TypeOrm<User> {
     public createdTime!: Date;
 
     @IsDate()
-    @PColumn(UpdateDateColumn, { type: 'timestamp', nullable: false, comment: '修改时间', update: true })
+    @PColumn(UpdateDateColumn, { type: 'timestamp', nullable: false, comment: '修改时间', update: true, name: 'updated_time' })
     public updatedTime!: Date;
+
+    // public async findUsers() {
+    //     console.log(map(getManager().getRepository(User).metadata.columns, ({ databaseName, propertyName }) => {
+    //         return databaseName || propertyName;
+    //     }), map(getManager().getRepository(UserInfo).metadata.columns, ({ databaseName, propertyName }) => {
+    //         return databaseName || propertyName;
+    //     }));
+    //     return await this.createQueryBuilder().leftJoinAndSelect(UserInfo, 'ui', [
+    //         'ui.userId = user.id'
+    //     ].join(' ')).select([
+    //         'user.id as id',
+    //         'user.email as email',
+    //         'user.type as type',
+    //         'user.isActived as isActived',
+    //         'user.isSuper as isSuper',
+    //         'ui.nickname as nickname',
+    //     ].join(',')).getRawMany();
+    // }
+
+    public async findUsers() {
+        return await join(User, UserInfo, {
+            type: JoinType.INNER,
+            on: [e => e.id, e => e.user],
+            groupBy: (user, _info) => [user.id],
+            fields: (user, info) => ({
+                [user.id]: 'id',
+                [user.email]: 'email',
+                [String(user.isActived)]: 'isActived',
+                [String(user.isSuper)]: 'isSuper',
+                [info.nickname]: { field: 'nickname', array: true },
+            }),
+        }, (db, user, info)=>{
+            console.log(db, user, info);
+            return db;
+        }).getRawMany();
+    }
 }

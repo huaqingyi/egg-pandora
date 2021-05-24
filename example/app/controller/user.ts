@@ -2,6 +2,7 @@ import { Controller } from 'egg';
 import { RequestMapping, RequestMethod, RestController, Before, ABefore } from 'egg-pandora';
 import { Exception } from '@dto/base';
 import '@dto/user';
+import { UserInfo } from '../entity/user.info';
 
 /**
  * @controller user
@@ -30,6 +31,22 @@ export default class extends Controller {
 
     /**
      * @summary 用户注册
+     * @router POST /user/info/{id}
+     * @request path string id ID 1
+     * @request body string nickname 昵称 test
+     * @response 200 UserResponseDto
+     * @apikey
+     */
+    @Exception
+    @RequestMapping({ path: '/info/:id', methods: [RequestMethod.POST], secret: false })
+    public async info() {
+        const info = new UserInfo();
+        info.nickname = this.ctx.post('nickname');
+        return await this.service.user.addInfo(info, this.ctx.params.id);
+    }
+
+    /**
+     * @summary 用户注册
      * @router POST /user/login false
      * @router POST /v1/user/login
      * @request body string email 邮箱地址 2304816231@qq.com
@@ -48,6 +65,18 @@ export default class extends Controller {
         delete (user as any).password;
         const token = this.app.jwt.sign(user, this.app.config.jwt.secret);
         this.ctx.set('authorization', token);
+        console.log('list', await this.ctx.service.user.test());
+        // console.log(await this.ctx.repo(User, UserInfo, {
+        //     on: [e => e.id, e => e.user],
+        //     groupBy: (user, _info) => [user.id],
+        //     fields: (user, info) => ({
+        //         [user.id]: 'id',
+        //         [user.email]: 'email',
+        //         [String(user.isActived)]: 'isActived',
+        //         [String(user.isSuper)]: 'isSuper',
+        //         [info.nickname]: { field: 'nickname', array: true },
+        //     }),
+        // }).getRawMany());
         return user;
     }
 

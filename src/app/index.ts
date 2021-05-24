@@ -2,8 +2,16 @@
 import { ValidationError, ValidationSchema } from 'class-validator';
 import { EggFile } from 'egg-multipart';
 import { SchemaObject } from 'openapi3-ts';
-import { Connection } from 'typeorm';
-import { TypeOrmClass, TypeOrm } from './pandora/typeorm';
+import { Connection, EntityTarget, SelectQueryBuilder } from 'typeorm';
+import { TypeOrmClass } from './pandora/typeorm';
+import { JoinOption } from './pandora/typeorm/orm';
+
+export declare function Repo<LeftEntity, RightEntity>(
+    left: EntityTarget<LeftEntity>, right: EntityTarget<RightEntity>,
+    config: JoinOption<LeftEntity, RightEntity>,
+    callback?: <P>(selection: SelectQueryBuilder<P>, e1: LeftEntity, e2: RightEntity) => SelectQueryBuilder<P>,
+): SelectQueryBuilder<LeftEntity | RightEntity>;
+export declare function Repo<E>(Entity: TypeOrmClass<E>, dbName?: string): E;
 
 declare module 'egg' {
     interface Context {
@@ -25,7 +33,7 @@ declare module 'egg' {
         file(name?: string): EggFile;
 
         connection: Connection;
-        repo: <E>(Entity: TypeOrmClass<E>, dbName?: string) => E;
+        repo: typeof Repo;
     }
 }
 

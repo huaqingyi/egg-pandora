@@ -1,5 +1,5 @@
 declare const _default: {
-    repo<E extends new (...props: any) => import("../pandora").TypeOrm<E>>(Entity: E, dbName?: string | undefined): any;
+    repo<E extends new (...props: any) => import("../pandora").TypeOrm<E>>(...props: any[]): any;
     param(this: import("egg").Context, name?: string | undefined): string | import("egg").PlainObject<string>;
     post(this: import("egg").Context, name?: string | undefined): any;
     file(this: import("egg").Context, name?: string | undefined): import("egg-multipart").EggFile | import("egg-multipart").EggFile[] | undefined;
